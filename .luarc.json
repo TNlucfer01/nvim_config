@@ -1,0 +1,9 @@
+{
+  "Lua.diagnostics.globals": ["vim"],
+  "Lua.diagnostics.enable": true,
+  "Lua.workspace.checkThirdParty": false,
+  "Lua.workspace.library": [
+    "$VIMRUNTIME/lua",
+    "${3rd}/luv/library"
+  ]
+}

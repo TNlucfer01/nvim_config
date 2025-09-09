@@ -1,0 +1,59 @@
+🔹 File Navigation & Management
+
+nvim-tree.lua → File explorer sidebar (like VS Code’s explorer).
+
+telescope.nvim → Fuzzy finder for files, buffers, help docs, etc.
+
+fzf-lua or fzf.vim → Alternative fuzzy finding using fzf.
+
+🔹 UI & Appearance
+
+lualine.nvim → Status line at the bottom with git, mode, diagnostics.
+
+bufferline.nvim → Tab-like buffer management.
+
+nvim-web-devicons → File type icons.
+
+tokyonight.nvim / gruvbox.nvim → Popular color schemes.
+
+🔹 Coding Productivity
+
+nvim-treesitter → Better syntax highlighting + code navigation.
+
+comment.nvim → Quick commenting (gc to toggle comments).
+
+surround.nvim or vim-surround → Easily add/change quotes, brackets, etc.
+
+autopairs.nvim → Auto-close brackets/quotes.
+
+🔹 Git Integration
+
+gitsigns.nvim → Git diff signs, blame, stage/unstage lines.
+
+fugitive.vim → Classic git integration.
+
+🔹 LSP & Autocompletion
+
+nvim-lspconfig → Configures Language Server Protocol (LSP).
+
+mason.nvim → Easy installer for LSP servers, linters, formatters.
+
+nvim-cmp → Completion engine (code suggestions).
+
+LuaSnip → Snippet engine for faster coding.
+
+null-ls.nvim (or successor none-ls.nvim) → Linters/formatters integration.
+
+🔹 Debugging
+
+nvim-dap → Debug Adapter Protocol (debug code inside Neovim).
+
+nvim-dap-ui → Nice UI for debugging.
+
+🔹 Misc & Utilities
+
+which-key.nvim → Shows available keymaps as you type.
+
+todo-comments.nvim → Highlight TODO/FIXME/NOTE in code.
+
+project.nvim → Auto-detect and switch between projects.
