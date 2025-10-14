@@ -15,11 +15,13 @@ return {
 		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls" }, -- Specify desired LSP servers
+				ensure_installed = { "lua_ls", "clangd" }, -- Specify desired LSP servers
 				handlers = {
+					--[[ for default capabilities ]]
 					function(server_name)
 						require("lspconfig")[server_name].setup({})
 					end,
+
 					["lua_ls"] = function()
 						local lspconfig = require("lspconfig")
 						lspconfig.lua_ls.setup({
@@ -32,6 +34,31 @@ return {
 								},
 							},
 							root_dir = lspconfig.util.root_pattern(".git", ".luarc.json", "init.lua") or vim.loop.cwd(),
+						})
+					end,
+					["clangd"] = function()
+						local lspconfig = require("lspconfig")
+						lspconfig.clangd.setup({
+							capabilities = require("cmp_nvim_lsp").default_capabilities(),
+							cmd = {
+								"clangd",
+								"--background-index",
+								"--clang-tidy",
+								"--header-insertion=iwyu",
+								"--completion-style=detailed",
+								"--function-arg-placeholders",
+								"--fallback-style=llvm",
+							},
+							root_dir = lspconfig.util.root_pattern(
+								"compile_commands.json",
+								"compile_flags.txt",
+								".clangd",
+								"CMakeLists.txt",
+								"Makefile",
+								".git"
+							) or vim.loop.cwd(),
+							filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+							single_file_support = true,
 						})
 					end,
 					["jdtls"] = function()

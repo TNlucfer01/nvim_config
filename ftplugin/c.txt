@@ -1,0 +1,112 @@
+-- C filetype-specific settings
+-- This file is automatically sourced when editing C files
+
+-- Set C-specific options
+vim.bo.tabstop = 4
+vim.bo.shiftwidth = 4
+vim.bo.softtabstop = 4
+vim.bo.expandtab = false -- Use tabs instead of spaces for C (common convention)
+vim.bo.cindent = true
+vim.bo.cinoptions = "g0,N-s,i4,+4,(0,w1,W4,l1,j1,J1" -- C indentation options
+vim.bo.textwidth = 80
+vim.bo.colorcolumn = "80,120" -- Show lines at 80 and 120 characters
+
+-- Set comment string for comment plugins
+vim.bo.commentstring = "/* %s */"
+
+-- C-specific keymaps (buffer-local)
+local map = vim.keymap.set
+local opts = { buffer = true, silent = true }
+
+-- Quick compile and run
+map("n", "<leader>cc", function()
+	local file = vim.fn.expand("%:p")
+	local output = vim.fn.expand("%:p:r")
+	local cmd = string.format("gcc -g -Wall -Wextra -std=c99 '%s' -o '%s'", file, output)
+	vim.cmd("!" .. cmd)
+end, vim.tbl_extend("force", opts, { desc = "Compile C file" }))
+
+map("n", "<leader>cr", function()
+	local output = vim.fn.expand("%:p:r")
+	if vim.fn.executable(output) == 1 then
+		vim.cmd("!" .. output)
+	else
+		print("Executable not found. Compile first with <leader>cc")
+	end
+end, vim.tbl_extend("force", opts, { desc = "Run C program" }))
+
+-- Debug with compilation
+map("n", "<leader>cd", function()
+	local file = vim.fn.expand("%:p")
+	local output = vim.fn.expand("%:p:r")
+	local cmd = string.format("gcc -g -Wall -Wextra -std=c99 '%s' -o '%s'", file, output)
+	print("Compiling for debug...")
+	vim.fn.system(cmd)
+	if vim.v.shell_error == 0 then
+		print("Compilation successful. Starting debugger...")
+		require("dap").run({
+			type = "cppdbg",
+			request = "launch",
+			name = "Debug current C file",
+			program = output,
+			cwd = vim.fn.getcwd(),
+			stopAtEntry = false,
+		})
+	else
+		print("Compilation failed!")
+	end
+end, vim.tbl_extend("force", opts, { desc = "Compile and debug C file" }))
+
+-- Include guard generation for header files
+if vim.fn.expand("%:e") == "h" then
+	map("n", "<leader>ig", function()
+		local filename = vim.fn.expand("%:t:r"):upper() .. "_H"
+		local guard = "#ifndef " .. filename .. "\n#define " .. filename .. "\n\n\n\n#endif /* " .. filename .. " */"
+		local lines = vim.split(guard, "\n")
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+		vim.api.nvim_win_set_cursor(0, { 4, 0 }) -- Position cursor in the middle
+	end, vim.tbl_extend("force", opts, { desc = "Generate include guard" }))
+end
+
+-- Abbreviations for common C constructs
+vim.cmd([[
+iabbrev <buffer> inc #include
+iabbrev <buffer> def #define
+iabbrev <buffer> ifdef #ifdef
+iabbrev <buffer> ifndef #ifndef
+iabbrev <buffer> endif #endif
+iabbrev <buffer> pf printf(
+iabbrev <buffer> sf scanf(
+]])
+
+-- Main template abbreviation (separated due to complexity)
+vim.cmd([[iabbrev <buffer> main int main(void) {<CR>return 0;<CR>}<Up><Up><End>]])
+
+-- Set up additional C-specific autocommands
+local augroup = vim.api.nvim_create_augroup("CSettings", { clear = true })
+
+-- Auto-format on save (if conform is available)
+vim.api.nvim_create_autocmd("BufWritePre", {
+	group = augroup,
+	buffer = 0,
+	callback = function()
+		local success, conform = pcall(require, "conform")
+		if success then
+			conform.format({ bufnr = 0, lsp_fallback = true })
+		end
+	end,
+})
+
+-- Set up better syntax highlighting for modern C
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup,
+	pattern = "c",
+	callback = function()
+		-- Highlight C99/C11 keywords
+		vim.cmd([[
+			syntax keyword cType _Bool
+			syntax keyword cConstant true false
+			syntax keyword cStatement restrict inline
+		]])
+	end,
+})

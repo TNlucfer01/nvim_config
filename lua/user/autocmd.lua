@@ -1,20 +1,17 @@
 vim.api.nvim_create_autocmd("FocusGained", {
-  command = "checktime"
+	command = "checktime",
 })
-
 
 vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    vim.highlight.on_yank({ timeout = 200 })
-  end,
+	callback = function()
+		vim.highlight.on_yank({ timeout = 200 })
+	end,
 })
-
 
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*",
-  command = [[%s/\s\+$//e]],
+	pattern = "*",
+	command = [[%s/\s\+$//e]],
 })
-
 
 --[[vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.lua",
@@ -23,26 +20,20 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })]]
 
-
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = "*.md",
-  command = "set filetype=markdown"
+	pattern = "*.md",
+	command = "set filetype=markdown",
 })
-
 
 vim.api.nvim_create_autocmd("VimResized", {
-  command = "tabdo wincmd ="
+	command = "tabdo wincmd =",
 })
-
 
 vim.api.nvim_create_autocmd("BufReadPost", {
-  callback = function()
-    local line = vim.fn.line("'\"")
-    if line > 0 and line <= vim.fn.line("$") then
-      vim.cmd("normal! g'\"")
-    end
-  end,
+	callback = function()
+		local line = vim.fn.line("'\"")
+		if line > 0 and line <= vim.fn.line("$") then
+			vim.cmd("normal! g'\"")
+		end
+	end,
 })
-
-
-

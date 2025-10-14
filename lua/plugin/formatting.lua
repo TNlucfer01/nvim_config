@@ -21,6 +21,9 @@ return {
 					python = { "black" },
 					javascript = { "prettier" },
 					typescript = { "prettier" },
+					java = { "google-java-format" },
+					c = { "clang-format" },
+					cpp = { "clang-format" },
 				},
 
 				format_on_save = {
@@ -59,7 +62,18 @@ return {
 		dependencies = { "mason-org/mason.nvim" },
 		config = function()
 			require("mason-tool-installer").setup({
-				ensure_installed = { "stylua", "black", "prettier", "pylint", "flake8", "eslint_d" },
+				ensure_installed = {
+					"stylua",
+					"black",
+					"prettier",
+					"pylint",
+					"flake8",
+					"eslint_d",
+					-- C/C++ tools
+					"clangd",
+					"cppdbg",
+					"clang-format",
+				},
 				auto_update = true, -- Automatically update tools when running :MasonUpdate
 			})
 		end,
