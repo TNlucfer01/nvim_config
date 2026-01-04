@@ -24,6 +24,8 @@ return {
 					java = { "google-java-format" },
 					c = { "clang-format" },
 					cpp = { "clang-format" },
+					sh = { "shfmt" },
+					bash = { "shfmt" },
 				},
 
 				format_on_save = {
@@ -42,7 +44,7 @@ return {
 		config = function()
 			local lint = require("lint")
 			lint.linters_by_ft = {
-				lua = { "luacheck" },
+				lua = { "selene" },
 				python = { "pylint", "flake8" },
 				javascript = { "eslint_d" },
 				typescript = { "eslint_d" },
@@ -64,6 +66,7 @@ return {
 			require("mason-tool-installer").setup({
 				ensure_installed = {
 					"stylua",
+					"selene",
 					"black",
 					"prettier",
 					"pylint",
@@ -73,6 +76,8 @@ return {
 					"clangd",
 					"cppdbg",
 					"clang-format",
+					"google-java-format",
+					"shfmt",
 				},
 				auto_update = true, -- Automatically update tools when running :MasonUpdate
 			})

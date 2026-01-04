@@ -2,6 +2,13 @@ return {
 	-- Core DAP
 	{
 		"mfussenegger/nvim-dap",
+		event = "VeryLazy",
+		dependencies = {
+			"rcarriga/nvim-dap-ui",
+			"nvim-neotest/nvim-nio",
+			"jay-babu/mason-nvim-dap.nvim",
+			"theHamsta/nvim-dap-virtual-text",
+		},
 	},
 
 	-- DAP UI
@@ -14,6 +21,9 @@ return {
 		config = function()
 			local dap = require("dap")
 			local dapui = require("dapui")
+			local mason_dap = require("mason-nvim-dap")
+			local dap_virtual_text = require("nvim-dap-virtual-text")
+			dap_virtual_text.setup()
 
 			dapui.setup()
 
@@ -42,6 +52,7 @@ return {
 
 			require("mason-nvim-dap").setup({
 				ensure_installed = { "python", "cppdbg", "java-debug-adapter" }, -- debuggers
+				automatic_installation = true,
 				handlers = {
 					function(config)
 						-- default handler hoe can i specify this for all as a comman i think i should
@@ -61,31 +72,60 @@ return {
 				},
 			})
 
+			dap.adapters.java = function(callback)
+				-- Substitute this path with your own jar path
+				callback({
+					type = "server",
+					host = "127.0.0.1",
+					port = 5005,
+				})
+			end
+
 			dap.configurations.java = {
 				{
-					name = "Debug Current Java File",
-					type = "java-debug-adapter",
+					type = "java",
 					request = "launch",
-					mainClass = function()
-						local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-						local package = ""
-						local class = vim.fn.expand("%:t:r")
-						for _, line in ipairs(lines) do
-							local p = line:match("^%s*package%s+([%w%.]+);")
-							if p then
-								package = p
-								break
-							end
-						end
-						return package ~= "" and package .. "." .. class or class
-					end,
-					classPaths = { "${workspaceFolder}/bin" }, -- Your compiled classes dir
-					cwd = "${workspaceFolder}",
-					stopOnEntry = false,
-					console = "integratedTerminal",
-					preLaunchTask = "javac -d bin ${fileDirname}/*.java", -- Optional auto-compile
+					name = "Debug Java Program",
+					projectName = "MyProject",
+					mainClass = "com.example.Main",
+					javaExec = "java",
+					cwd = vim.fn.getcwd(),
+					args = {},
+					env = {},
+				},
+				{
+					type = "java",
+					request = "attach",
+					name = "Attach to Java Process",
+					hostName = "127.0.0.1",
+					port = 5005,
 				},
 			}
+			-- dap.configurations.java = {
+			-- 	{
+			-- 		name = "Debug Current Java File",
+			-- 		type = "java-debug-adapter",
+			-- 		request = "launch",
+			-- 		mainClass = function()
+			-- 			local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+			-- 			local package = ""
+			-- 			local class = vim.fn.expand("%:t:r")
+			-- 			for _, line in ipairs(lines) do
+			-- 				local p = line:match("^%s*package%s+([%w%.]+);")
+			-- 				if p then
+			-- 					package = p
+			-- 					break
+			-- 				end
+			-- 			end
+			-- 			return package ~= "" and package .. "." .. class or class
+			-- 		end,
+			-- 		classPaths = { "${workspaceFolder}/bin" }, -- Your compiled classes dir
+			-- 		cwd = "${workspaceFolder}",
+			-- 		stopOnEntry = false,
+			-- 		console = "integratedTerminal",
+			-- 		preLaunchTask = "javac -d bin ${fileDirname}/*.java", -- Optional auto-compile
+			-- 	},
+			-- }
 			-- dap.configurations.java = {
 			-- 					name="debuggJ",
 			-- 					type="java-debug-adapter",
@@ -98,41 +138,30 @@ return {
 			--
 			-- 			}
 			-- -- C/C++ Debug configurations
-			dap.configurations.c = {
-				{
-					name = "Launch C Program",
-					type = "cppdbg",
-					request = "launch",
-					program = function()
-						return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-					end,
-					cwd = "${workspaceFolder}",
-					stopAtEntry = false,
-					setupCommands = {
-						{
-							text = "-enable-pretty-printing",
-							description = "enable pretty printing",
-							ignoreFailures = false,
-						},
+			dap.configurations = {
+				c = {
+					{
+						name = "Launch file",
+						type = "cppdbg",
+						request = "launch",
+						program = function()
+							return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+						end,
+						cwd = "${workspaceFolder}",
+						stopAtEntry = false,
+						MIMode = "lldb",
 					},
-				},
-				{
-					name = "Attach to gdb",
-					type = "cppdbg",
-					request = "attach",
-					program = function()
-						return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-					end,
-					processId = function()
-						return tonumber(vim.fn.input("Process ID: "))
-					end,
-					cwd = "${workspaceFolder}",
-					setupCommands = {
-						{
-							text = "-enable-pretty-printing",
-							description = "enable pretty printing",
-							ignoreFailures = false,
-						},
+					{
+						name = "Attach to lldbserver :1234",
+						type = "cppdbg",
+						request = "launch",
+						MIMode = "lldb",
+						miDebuggerServerAddress = "localhost:1234",
+						miDebuggerPath = "/usr/bin/lldb",
+						cwd = "${workspaceFolder}",
+						program = function()
+							return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+						end,
 					},
 				},
 			}

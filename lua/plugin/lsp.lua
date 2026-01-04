@@ -15,7 +15,7 @@ return {
 		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "clangd" }, -- Specify desired LSP servers
+				ensure_installed = { "lua_ls", "clangd", "ts_ls" }, -- Specify desired LSP servers
 				handlers = {
 					--[[ for default capabilities ]]
 					function(server_name)
