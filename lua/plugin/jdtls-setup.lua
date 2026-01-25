@@ -3,13 +3,15 @@ return {
 	ft = { "java" }, -- load only for Java files
 	config = function()
 		local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-		local workspace_dir = "/home/darkemperor/aathi/java" .. project_name
+		-- can i cange the workspace dynamically
+		local workspace_dir = "/home/darkemperor/aathi/LEET/JAVA/" .. project_name
 		local bundles = {
 			vim.fn.glob("/home/darkemperor/.local/share/java-debug/com.microsoft.java.debug.plugin-*.jar", 1),
 			vim.fn.glob("/home/darkemperor/.local/share/vscode-java-test/server/*.jar", 1),
 		}
 		local config = {
 			cmd = {
+				-- can i make this valid for multiple jdk version and i need to learn how this works fr the future works
 				"/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
 
 				"-Declipse.application=org.eclipse.jdt.ls.core.id1",

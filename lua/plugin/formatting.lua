@@ -5,7 +5,7 @@ map("n", "<leader>l", function()
 end, { desc = "Trigger linting" })
 
 map("n", "<leader>hf", function()
-	require("conform").format({ async = true, lsp_fallback = true })
+	require("conform").format({ async = true, lsp_fallback = false })
 end, { desc = "Format buffer" })
 
 return {

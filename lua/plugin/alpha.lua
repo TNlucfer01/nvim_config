@@ -8,7 +8,7 @@ return {
 	config = function()
 		local alpha = require("alpha")
 		local dashboard = require("alpha.themes.startify")
-
+		--is there any other header that i cccan use
 		dashboard.section.header.val = {
 			[[                                                                       ]],
 			[[                                                                       ]],
